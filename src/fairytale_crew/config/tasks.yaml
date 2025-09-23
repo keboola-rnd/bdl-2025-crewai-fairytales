@@ -24,5 +24,5 @@ translate_fairytale:
   description: >
     Translate the fairytale story to given language: {target_language}
   expected_output: >
-    A fairytale story in given language.
+    A fairytale story in given language. Use markdown format and keep the story as it is.
   agent: fairytale_translator
