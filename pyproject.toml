@@ -1,0 +1,26 @@
+[project]
+name = "fairytale_crew"
+version = "0.1.0"
+description = "fairytale-crew using crewAI"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai>=0.150.0",
+    "crewai-tools>=0.73.1",
+    "httpx>=0.28.1",
+    "keboola-component>=1.6.10",
+    "pandas>=2.3.2",
+]
+
+[project.scripts]
+fairytale_crew = "fairytale_crew.main:run"
+run_crew = "fairytale_crew.main:run"
+train = "fairytale_crew.main:train"
+replay = "fairytale_crew.main:replay"
+test = "fairytale_crew.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"

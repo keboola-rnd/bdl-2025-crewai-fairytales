@@ -1,0 +1,28 @@
+plan_fairytale:
+  description: >
+    Create a plan for a fairytale with given inputs 
+    Character name: {character_name}
+    Character type: {character_type}
+    Personality traits: {personality_traits}
+    Location: {location}
+    Atmosphere: {atmosphere}
+    Main problem: {main_problem}
+    Antagonist: {antagonist}
+  expected_output: >
+    A plan for a fairytale. Do not write the story, only plan it.
+  agent: fairytale_planner
+
+write_fairytale:
+  description: >
+    Write a fairytale with given inputs {story_plan}
+  expected_output: >
+    A fairytale story. Do not plan the story, only write it.
+  agent: fairytale_writer
+
+
+translate_fairytale:
+  description: >
+    Translate the fairytale story to given language: {target_language}
+  expected_output: >
+    A fairytale story in given language.
+  agent: fairytale_translator

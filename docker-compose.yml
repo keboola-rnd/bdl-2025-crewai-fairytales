@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  crew:
+    build: .
+    container_name: fairytale-crew
+    restart: unless-stopped
+    
+    # Environment variables from .env file
+    env_file:
+      - .env
+    
+    # Mount volumes for data persistence
+    volumes:
+      - ./:/app
+    
+    # Uncomment if you need to expose ports
+    # ports:
+    #   - "8000:8000"
+    
+    # Interactive mode for development
+    stdin_open: true
+    tty: true
