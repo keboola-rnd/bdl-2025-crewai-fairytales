@@ -25,6 +25,32 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Load books data
+books = pd.read_csv('in/tables/books.csv')
+
+# Function to create selectbox data for books
+def create_book_selectbox_data(books_df):
+    """Create selectbox data with book titles and IDs."""
+    book_options = []
+    for _, book in books_df.iterrows():
+        title = book['title']
+        book_id = book['book_id']
+        display_text = f"{title} ({book_id})"
+        book_options.append((display_text, book_id))
+    
+    book_options.sort(key=lambda x: x[0])
+    options = [option[0] for option in book_options]
+    
+    def get_book_id(selected_display):
+        for display, book_id in book_options:
+            if display == selected_display:
+                return book_id
+        return None
+    
+    return options, get_book_id
+
+
+
 # Custom CSS for better styling
 st.markdown("""
 <style>
@@ -61,7 +87,7 @@ st.markdown("""
 
 # Main header
 st.markdown('<h1 class="main-header">🏰 Fairytales Generator 🏰</h1>', unsafe_allow_html=True)
-st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666;">Create Your Perfect Story</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align: center; font-size: 1.2rem; color: #666;">Create Your Perfect Story - Simple & Easy</p>', unsafe_allow_html=True)
 
 # Create tabs for different functionalities
 tab1, tab2 = st.tabs(["📝 Create Story", "📖 Read Stories"])
@@ -72,25 +98,10 @@ with tab1:
     # 🧚‍♀️ MAIN CHARACTER SECTION
     st.markdown('<h2 class="section-header">🧚‍♀️ Main Character</h2>', unsafe_allow_html=True)
 
-    char_name = st.text_input("Character Name", placeholder="Enter your hero's name...")
+    main_character = st.text_input("Main Character", placeholder="Enter your hero's name and description...")
 
-    char_type = st.selectbox(
-        "Character Type",
-        ["Child", "Adult", "Animal", "Magical Creature", "Princess", "Prince", "Witch", "Wizard"],
-        index=None,
-        placeholder="Select or type a custom character type...",
-        accept_new_options=True
-    )
-
-    personality = st.multiselect(
-        "Personality Traits",
-        ["Brave", "Shy", "Clever", "Funny", "Kind", "Curious", "Loyal", "Adventurous", "Wise", "Playful"],
-        default=["Brave", "Kind"],
-        accept_new_options=True
-    )
-
-    # 🏰 SETTING & WORLD SECTION
-    st.markdown('<h2 class="section-header">🏰 Setting & World</h2>', unsafe_allow_html=True)
+    # 🏰 LOCATION SECTION
+    st.markdown('<h2 class="section-header">🏰 Location</h2>', unsafe_allow_html=True)
 
     location = st.selectbox(
         "Location",
@@ -100,16 +111,8 @@ with tab1:
         accept_new_options=True
     )
 
-    atmosphere = st.selectbox(
-        "Atmosphere",
-        ["Dark & Mysterious", "Bright & Cheerful", "Magical & Whimsical", "Serious & Dramatic", "Fun & Playful"],
-        index=None,
-        placeholder="Select or type a custom atmosphere...",
-        accept_new_options=True
-    )
-
-    # ⚔️ CONFLICT & ADVENTURE SECTION
-    st.markdown('<h2 class="section-header">⚔️ Conflict & Adventure</h2>', unsafe_allow_html=True)
+    # ⚔️ MAIN PROBLEM SECTION
+    st.markdown('<h2 class="section-header">⚔️ Main Problem</h2>', unsafe_allow_html=True)
 
     main_problem = st.text_area(
         "Main Problem/Challenge",
@@ -117,34 +120,22 @@ with tab1:
         height=100
     )
 
-    antagonist = st.text_input(
-        "Antagonist/Villain",
-        placeholder="Who or what is the main obstacle? (dragon, evil witch, curse, etc.)"
-    )
-
-    # 👥 SUPPORTING CAST SECTION
-    st.markdown('<h2 class="section-header">👥 Supporting Cast</h2>', unsafe_allow_html=True)
-
-    helper_mentor = st.text_input(
-        "Helper/Mentor",
-        placeholder="Wise character who helps (fairy godmother, old wizard, etc.)"
-    )
-
-    # 📖 STORY PREFERENCES SECTION
-    st.markdown('<h2 class="section-header">📖 Story Preferences</h2>', unsafe_allow_html=True)
-
-    story_length = st.radio(
-        "Story Length",
-        ["Short (1-2 pages)", "Medium (3-5 pages)", "Long (6+ pages)"]
-    )
-
-    tone = st.selectbox(
-        "Tone",
-        ["Funny & Humorous", "Serious & Dramatic", "Adventurous & Exciting", "Educational & Teaching", "Romantic & Sweet", "Mysterious & Suspenseful"],
+    # 📖 INSPIRATION SECTION
+    st.markdown('<h2 class="section-header">📖 Inspiration from Existing Book</h2>', unsafe_allow_html=True)
+    
+    inspiration_options, get_inspiration_book_id = create_book_selectbox_data(books)
+    
+    selected_inspiration_display = st.selectbox(
+        "Choose a book for inspiration",
+        options=inspiration_options,
         index=None,
-        placeholder="Select or type a custom tone...",
-        accept_new_options=True
+        placeholder="Select a book for inspiration..."
     )
+    
+    selected_inspiration_id = get_inspiration_book_id(selected_inspiration_display) if selected_inspiration_display else None
+
+    # 🌍 TARGET LANGUAGE SECTION
+    st.markdown('<h2 class="section-header">🌍 Target Language</h2>', unsafe_allow_html=True)
 
     target_language = st.selectbox(
         "Target Language",
@@ -152,14 +143,6 @@ with tab1:
         index=None,
         placeholder="Select or type a custom language...",
         accept_new_options=True
-    )
-
-    # 🎨 VISUAL STYLE SECTION
-    st.markdown('<h2 class="section-header">🎨 Visual Style</h2>', unsafe_allow_html=True)
-
-    art_style = st.radio(
-        "Art Style",
-        ["Cartoon & Colorful", "Realistic & Detailed", "Watercolor & Soft", "Abstract & Artistic"]
     )
 
     # Action buttons at the bottom
@@ -170,18 +153,12 @@ with tab1:
         # Prepare data for upload
         story_data = {
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'character_name': char_name,
-            'character_type': char_type,
-            'personality_traits': ', '.join(personality) if personality else '',
+            'inspiration_book_id': selected_inspiration_id,
+            'inspiration_book_title': selected_inspiration_display,
+            'main_character': main_character,
             'location': location,
-            'atmosphere': atmosphere,
             'main_problem': main_problem,
-            'antagonist': antagonist,
-            'helper_mentor': helper_mentor,
-            'story_length': story_length,
-            'tone': tone,
-            'target_language': target_language,
-            'art_style': art_style
+            'target_language': target_language
         }
 
         try:
@@ -194,7 +171,7 @@ with tab1:
 
             # Upload to Keboola storage using write_table method
             keboola.write_table(
-                table_id="in.c-generator-data.story-config",
+                table_id="in.c-generator-data.story",
                 df=df,
                 is_incremental=False  # Append mode to add new rows
             )
@@ -256,14 +233,14 @@ with tab2:
                         with col1:
                             if 'timestamp' in latest_fairytale:
                                 st.info(f"📅 Generated: {latest_fairytale['timestamp']}")
-                            if 'character_name' in latest_fairytale:
-                                st.info(f"👤 Character: {latest_fairytale['character_name']}")
+                            if 'main_character' in latest_fairytale:
+                                st.info(f"👤 Main Character: {latest_fairytale['main_character']}")
                         
                         with col2:
                             if 'location' in latest_fairytale:
-                                st.info(f"🏰 Setting: {latest_fairytale['location']}")
-                            if 'tone' in latest_fairytale:
-                                st.info(f"🎭 Tone: {latest_fairytale['tone']}")
+                                st.info(f"🏰 Location: {latest_fairytale['location']}")
+                            if 'target_language' in latest_fairytale:
+                                st.info(f"🌍 Language: {latest_fairytale['target_language']}")
                         
                         st.success("✨ Fairytale loaded successfully!")
                         st.balloons()
@@ -294,27 +271,26 @@ with tab2:
     """)
 
 # Display current configuration in sidebar (only show when in Create Story tab)
-if 'char_name' in locals():
+if 'main_character' in locals():
     with st.sidebar:
         st.markdown("## 📋 Current Configuration")
         st.markdown("---")
         
-        if char_name:
-            st.write(f"**Hero:** {char_name}")
-        if char_type:
-            st.write(f"**Type:** {char_type}")
+        if selected_inspiration_id:
+            st.write(f"**Inspiration:** {selected_inspiration_display}")
+        if main_character:
+            st.write(f"**Main Character:** {main_character}")
         if location:
-            st.write(f"**Setting:** {location}")
+            st.write(f"**Location:** {location}")
         if main_problem:
-            st.write(f"**Challenge:** {main_problem[:50]}...")
-        if story_length:
-            st.write(f"**Length:** {story_length}")
-        if tone:
-            st.write(f"**Tone:** {tone}")
+            st.write(f"**Main Problem:** {main_problem[:50]}...")
+        if target_language:
+            st.write(f"**Target Language:** {target_language}")
         
         st.markdown("---")
-        st.markdown("### 🎯 Quick Stats")
-        st.metric("Personality Traits", len(personality))
+        st.markdown("### 🎯 Story Summary")
+        filled_fields = sum([bool(selected_inspiration_id), bool(main_character), bool(location), bool(main_problem), bool(target_language)])
+        st.metric("Fields Completed", f"{filled_fields}/5")
 
 # Footer
 st.markdown("---")
