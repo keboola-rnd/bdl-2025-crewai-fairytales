@@ -1,17 +1,28 @@
+find_fairytale:
+  description: >
+    Find book in Keboola storage using book id "{inspiration_book_id}". Your steps are:
+     - search for bucket "mysql-fairytales-joined"
+     - find table details for table "books_authors_summaries_complete" in Keboola storage
+     - use only id from book to build a query
+     - use summary of book for inspiration
+     - make extra sure you will make maximum effort to query the table if input is not empty
+     - - list all tables in Keboola storage to find the correct table
+     - - if your query fails try to repair it and try again multiple times until you succeed
+
+  expected_output: >
+    An inspiration book summary which will be provided to fairytale_planner agent in next step
+  agent: fairytale_finder
+
+
 plan_fairytale:
   description: >
     Create a plan for a fairytale with given inputs 
-    Character name: {character_name}
+    Character name: {main_character}
     Location: {location}
     Main problem: {main_problem}
 
-    If following input is not empty: "{inspiration_book}" you shold:
-     - query table `kbc-euw3-2179-8b66`.`out_c_mysql_fairytales_cleaned`.`clean_book_summaries`
-     - use summary of book for inspiration
-     - add summary of book to the plan
-     - make extra sure you will make maximum effort to query the table if input is not empty
-     - - if you are unable to query the table, say so and continue with the plan
-
+    If inspiaration book is provided from find_fairytale agent you should:
+     - use summary of book for inspiration and continue with the plan
      
   expected_output: >
     A plan for a fairytale. Do not write the story, only plan it.
@@ -20,7 +31,8 @@ plan_fairytale:
 
 write_fairytale:
   description: >
-    Write a fairytale with given inputs {story_plan}
+    Write a fairytale with input given from plan_fairytale agent
+    Fairytable should be max 3 paragraphs long.
   expected_output: >
     A fairytale story. Do not plan the story, only write it.
   agent: fairytale_writer

@@ -19,11 +19,19 @@ class FairytaleCrew():
         self.keboola_mcp_tools = None
 
     @agent
+    def fairytale_finder(self) -> Agent:
+        return Agent(
+            config=self.agents_config['fairytale_finder'],
+            verbose=True,
+            tools=self.get_keboola_mcp_tools(),
+            max_retry_limit=10
+        )
+
+    @agent
     def fairytale_planner(self) -> Agent:
         return Agent(
             config=self.agents_config['fairytale_planner'],
-            verbose=True,
-            tools=self.get_keboola_mcp_tools(),
+            verbose=True
         )
 
     @agent
@@ -39,11 +47,18 @@ class FairytaleCrew():
             config=self.agents_config['fairytale_translator'],
             verbose=True,
         )
+        
+    @task
+    def find_fairytale(self) -> Task:
+        return Task(
+            config=self.tasks_config['find_fairytale'],
+            agent=self.fairytale_finder()
+        )
 
     @task
     def plan_fairytale(self) -> Task:
         return Task(
-            config=self.tasks_config['plan_fairytale'],
+            config=self.tasks_config['find_fairytale'],
             agent=self.fairytale_planner()
         )
         
@@ -70,7 +85,7 @@ class FairytaleCrew():
             tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
-            llm=LLM(model="gpt-4o", temperature=0.3)
+            llm=LLM(model="openai/gpt-o1", temperature=0.3)
         )
         
     

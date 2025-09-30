@@ -13,22 +13,12 @@ import csv
 
 class FairytaleState(BaseModel):
     timestamp: str = ""
-    character_name: str = ""
-    character_type: str = ""
-    personality_traits: str = ""
+    main_character: str = ""
+    inspiration_book_id: int = ""
     location: str = ""
-    atmosphere: str = ""
     main_problem: str = ""
-    antagonist: str = ""
-    helper_mentor: str = ""
-    story_length: str = ""
-    tone: str = ""
     target_language: str = ""
-    art_style: str = ""
-    story_plan: str = ""
     fairytale: str = ""
-    inspiration_book: str = ""
-
 
 class FairytaleFlow(Flow[FairytaleState]):
 
