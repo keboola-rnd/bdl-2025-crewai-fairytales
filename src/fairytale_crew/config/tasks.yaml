@@ -8,6 +8,10 @@ plan_fairytale:
     Atmosphere: {atmosphere}
     Main problem: {main_problem}
     Antagonist: {antagonist}
+
+    If following input is not empty: "{inspiration_book}" you should use Keboola MCP tool to query table "out.c-mysql-fairytales-joined.books_authors_summaries_complete"
+    to get inspiration from previous fairytales.
+    
   expected_output: >
     A plan for a fairytale. Do not write the story, only plan it.
   agent: fairytale_planner

@@ -7,8 +7,8 @@ from keboola_streamlit import KeboolaStreamlit
 # Initialize Keboola connection
 try:
     # Retrieve credentials from Streamlit secrets
-    KEBOOLA_URL = st.secrets["KEBOOLA_URL"]
-    STORAGE_API_TOKEN = st.secrets["STORAGE_API_TOKEN"]
+    KEBOOLA_URL = st.secrets["kbc_url"]
+    STORAGE_API_TOKEN = st.secrets["kbc_token"]
     
     # Initialize the KeboolaStreamlit instance
     keboola = KeboolaStreamlit(root_url=KEBOOLA_URL, token=STORAGE_API_TOKEN)
@@ -164,52 +164,47 @@ with tab1:
 
     # Action buttons at the bottom
     st.markdown("---")
-    col_btn1, col_btn2 = st.columns(2)
 
-    with col_btn1:
-        if st.button("🎭 Generate Fairytale", use_container_width=True):
-            st.success("✨ Fairytale generation would start here! (No logic implemented yet)")
 
-    with col_btn2:
-        if st.button("💾 Save Configuration", use_container_width=True):
-            # Prepare data for upload
-            story_data = {
-                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'character_name': char_name,
-                'character_type': char_type,
-                'personality_traits': ', '.join(personality) if personality else '',
-                'location': location,
-                'atmosphere': atmosphere,
-                'main_problem': main_problem,
-                'antagonist': antagonist,
-                'helper_mentor': helper_mentor,
-                'story_length': story_length,
-                'tone': tone,
-                'target_language': target_language,
-                'art_style': art_style
-            }
-            
-            try:
-                # Check if Keboola connection is available
-                if keboola is None:
-                    st.error("❌ Keboola connection not available. Please check your configuration.")
-                
-                # Create DataFrame from the story data
-                df = pd.DataFrame([story_data])
-                
-                # Upload to Keboola storage using write_table method
-                keboola.write_table(
-                    table_id="in.c-generator-data.story-config",
-                    df=df,
-                    is_incremental=False  # Append mode to add new rows
-                )
-                
-                st.success("✨ Story configuration uploaded to Keboola storage!")
-                st.balloons()
-                
-            except Exception as e:
-                st.error(f"❌ Error uploading to Keboola: {str(e)}")
-                st.info("💡 Make sure you're running this app in a Keboola environment with proper authentication.")
+    if st.button("💾 Generate Fairytale", use_container_width=True):
+        # Prepare data for upload
+        story_data = {
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'character_name': char_name,
+            'character_type': char_type,
+            'personality_traits': ', '.join(personality) if personality else '',
+            'location': location,
+            'atmosphere': atmosphere,
+            'main_problem': main_problem,
+            'antagonist': antagonist,
+            'helper_mentor': helper_mentor,
+            'story_length': story_length,
+            'tone': tone,
+            'target_language': target_language,
+            'art_style': art_style
+        }
+
+        try:
+            # Check if Keboola connection is available
+            if keboola is None:
+                st.error("❌ Keboola connection not available. Please check your configuration.")
+
+            # Create DataFrame from the story data
+            df = pd.DataFrame([story_data])
+
+            # Upload to Keboola storage using write_table method
+            keboola.write_table(
+                table_id="in.c-generator-data.story-config",
+                df=df,
+                is_incremental=False  # Append mode to add new rows
+            )
+
+            st.success("✨ Story configuration uploaded to Keboola storage!")
+            st.balloons()
+
+        except Exception as e:
+            st.error(f"❌ Error uploading to Keboola: {str(e)}")
+            st.info("💡 Make sure you're running this app in a Keboola environment with proper authentication.")
 
 with tab2:
     # 📖 READ STORIES TAB
