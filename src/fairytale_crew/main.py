@@ -27,6 +27,7 @@ class FairytaleState(BaseModel):
     art_style: str = ""
     story_plan: str = ""
     fairytale: str = ""
+    inspiration_book: str = ""
 
 
 class FairytaleFlow(Flow[FairytaleState]):
@@ -69,6 +70,9 @@ def run():
     ci = CommonInterface()
     params = ci.configuration.parameters
     os.environ["OPENAI_API_KEY"] = params.get("#OPENAI_API_KEY")
+    os.environ["KBC_STORAGE_API_URL"] = params.get("KBC_STORAGE_API_URL")
+    os.environ["KBC_STORAGE_TOKEN"] = params.get("#KBC_STORAGE_TOKEN")
+    os.environ["KBC_WORKSPACE_SCHEMA"] = params.get("KBC_WORKSPACE_SCHEMA")
     flow = FairytaleFlow()
     flow.kickoff()
 

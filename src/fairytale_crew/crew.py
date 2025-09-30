@@ -1,9 +1,11 @@
-from crewai import Agent, Crew, Process, Task
+from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from crewai.tools import BaseTool
 from crewai_tools import MCPServerAdapter
+from mcp import StdioServerParameters 
+import os
 
 @CrewBase
 class FairytaleCrew():
@@ -68,7 +70,7 @@ class FairytaleCrew():
             tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
-            llm=LLM(model="gpt-4o-mini", temperature=0.7)
+            llm=LLM(model="gpt-4o", temperature=0.3)
         )
         
     
@@ -94,7 +96,7 @@ class FairytaleCrew():
             filtered_tools = []
             for tool in self.keboola_mcp_tools:
                 tool_name = getattr(tool, 'name', '')
-                if tool_name.startswith('list') or tool_name.startswith('get'):
+                if tool_name.startswith('list') or tool_name.startswith('get') or tool_name.startswith('query'):
                     filtered_tools.append(tool)
             
             return filtered_tools

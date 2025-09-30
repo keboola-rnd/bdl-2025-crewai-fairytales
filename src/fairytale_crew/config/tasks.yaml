@@ -2,18 +2,20 @@ plan_fairytale:
   description: >
     Create a plan for a fairytale with given inputs 
     Character name: {character_name}
-    Character type: {character_type}
-    Personality traits: {personality_traits}
     Location: {location}
-    Atmosphere: {atmosphere}
     Main problem: {main_problem}
-    Antagonist: {antagonist}
 
-    If following input is not empty: "{inspiration_book}" you should use Keboola MCP tool to query table "out.c-mysql-fairytales-joined.books_authors_summaries_complete"
-    to get inspiration from previous fairytales.
-    
+    If following input is not empty: "{inspiration_book}" you shold:
+     - query table `kbc-euw3-2179-8b66`.`out_c_mysql_fairytales_cleaned`.`clean_book_summaries`
+     - use summary of book for inspiration
+     - add summary of book to the plan
+     - make extra sure you will make maximum effort to query the table if input is not empty
+     - - if you are unable to query the table, say so and continue with the plan
+
+     
   expected_output: >
     A plan for a fairytale. Do not write the story, only plan it.
+    Last line should be summary of book used for inspiration.
   agent: fairytale_planner
 
 write_fairytale:
