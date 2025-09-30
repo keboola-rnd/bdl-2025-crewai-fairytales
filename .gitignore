@@ -209,3 +209,5 @@ __marimo__/
 
 # Keboola specific
 /data/*
+out/tables/*.csv
+in/tables/*.csv
