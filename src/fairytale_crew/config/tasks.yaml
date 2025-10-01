@@ -9,7 +9,6 @@ plan_fairytale:
      - title: {inspiration_book_title}
      - author_name: {inspiration_book_author_name}
      - summary: {inspiration_book_summary}
-     
   expected_output: >
     A plan for a fairytale. Do not write the story, only plan it.
     Last line should be summary of book used for inspiration.

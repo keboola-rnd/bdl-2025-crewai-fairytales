@@ -1,0 +1,6 @@
+find_book_task:
+  description: >
+    You have to find table \"books_authors_summaries_complete\".  and find a book with book_id: {book_id}" 
+  expected_output: >
+    A JSON object with following structure: {book_id: <book_id_value>, title: <book_title>, author_name: <author_name>, summary: <book_summary>}
+  agent: book_finder

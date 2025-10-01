@@ -5,16 +5,14 @@ from pydantic import BaseModel
 from crewai.flow import Flow, listen, start
 from crewai import Agent, Crew, Process, Task, LLM
 from fairytale_crew.crew import FairytaleCrew
+from fairytale_crew.find_crew import FindCrew
 import httpx
 from keboola.component import CommonInterface, UserException
 import os
 import json
 import pandas as pd
 import csv
-from typing import List
-from crewai.tools import BaseTool
-from crewai_tools import MCPServerAdapter
-from mcp import StdioServerParameters 
+
 
 
 class FairytaleState(BaseModel):
@@ -48,39 +46,12 @@ class FairytaleFlow(Flow[FairytaleState]):
     @listen(fill_state)
     def find_inspiration_book(self):
         
-        class BookSummary(BaseModel):
-            book_id: str
-            title: str
-            author_name: str
-            summary: str
-        
-        keboola_mcp_agent = Agent(
-            role='Book finder',
-            goal='Find a row in Keboola storage. Always make sure you are using MCP tools to find what you need.',
-            backstory='You are experienced user of Keboola MCP tool. You know how to use it to find a tables and query tables in Keboola storage.',
-            tools=self.get_keboola_mcp_tools(),
-            LLM=LLM(model="openai/gpt-4o", temperature=0.1)
-        )
-        
-        find_book_task = Task(
-            description=
-                "You have to find table \"books_authors_summaries_complete\".  and find a book with book_id: {book_id}" 
-            ,
-            expected_output='A JSON object with following structure: {book_id: <book_id_value>, title: <book_title>, author_name: <author_name>, summary: <book_summary>}',
-            output_json=BookSummary,
-            agent=keboola_mcp_agent,
-            verbose=True,
-            output_file="out/files/book_summary.json"
-        )
-        
-        inspiration_crew = Crew(
-            agents=[keboola_mcp_agent],
-            tasks=[find_book_task],
-            process=Process.sequential,
-            verbose=True
+        result = (
+            FindCrew()
+            .crew()
+            .kickoff(inputs={"book_id": self.state.inspiration_book_id})
         )
       
-        result = inspiration_crew.kickoff(inputs={"book_id": self.state.inspiration_book_id})
         self.state.inspiration_book_summary = result["summary"]
         self.state.inspiration_book_title = result["title"]
         self.state.inspiration_book_author_name = result["author_name"]
@@ -109,32 +80,7 @@ class FairytaleFlow(Flow[FairytaleState]):
         df.to_csv('out/tables/story.csv', index=False, encoding='utf-8', sep=',', quoting=csv.QUOTE_ALL)
         
         
-    def get_keboola_mcp_tools(self, include_write_tools: bool = False) -> List[BaseTool]:
-        if self.keboola_mcp_tools is None:
-            params = StdioServerParameters(
-                command="uvx",
-                args=[
-                                'keboola_mcp_server',
-                                '--transport', 'stdio',
-                                '--log-level', 'INFO',
-                                '--api-url', os.getenv('KBC_STORAGE_API_URL')
-                            ],
-                env={"UV_PYTHON": "3.12", **os.environ},
-            )
-            mcp_server_adapter = MCPServerAdapter(params)
-            self.keboola_mcp_tools = mcp_server_adapter.tools
-        
-        if include_write_tools:
-            return self.keboola_mcp_tools
-        else:
-        # Filter tools by name starting with "list" or "get"
-            filtered_tools = []
-            for tool in self.keboola_mcp_tools:
-                tool_name = getattr(tool, 'name', '')
-                if tool_name.startswith('list') or tool_name.startswith('get') or tool_name.startswith('query'):
-                    filtered_tools.append(tool)
-            
-            return filtered_tools
+
         
         
 
