@@ -14,6 +14,7 @@ output/
 
 # Keboola specific
 out/tables/*.csv
+out/tables/*.json
 in/tables/*.csv
 
 data/config.json

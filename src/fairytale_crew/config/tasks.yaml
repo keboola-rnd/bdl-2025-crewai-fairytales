@@ -1,19 +1,3 @@
-find_fairytale:
-  description: >
-    Find book in Keboola storage using book id "{inspiration_book_id}". Your steps are:
-     - search for bucket "mysql-fairytales-joined"
-     - find table details for table "books_authors_summaries_complete" in Keboola storage
-     - use only id from book to build a query
-     - use summary of book for inspiration
-     - make extra sure you will make maximum effort to query the table if input is not empty
-     - - list all tables in Keboola storage to find the correct table
-     - - if your query fails try to repair it and try again multiple times until you succeed
-
-  expected_output: >
-    An inspiration book summary which will be provided to fairytale_planner agent in next step
-  agent: fairytale_finder
-
-
 plan_fairytale:
   description: >
     Create a plan for a fairytale with given inputs 
@@ -21,8 +5,10 @@ plan_fairytale:
     Location: {location}
     Main problem: {main_problem}
 
-    If inspiaration book is provided from find_fairytale agent you should:
-     - use summary of book for inspiration and continue with the plan
+    For inspiration use following summary from another book_id:
+     - title: {inspiration_book_title}
+     - author_name: {inspiration_book_author_name}
+     - summary: {inspiration_book_summary}
      
   expected_output: >
     A plan for a fairytale. Do not write the story, only plan it.
@@ -42,5 +28,5 @@ translate_fairytale:
   description: >
     Translate the fairytale story to given language: {target_language}
   expected_output: >
-    A fairytale story in given language. Use markdown format and keep the story as it is.
+    A fairytale story in given language. Use markdown format and keep the story as it is. Return only the story, no other text.
   agent: fairytale_translator

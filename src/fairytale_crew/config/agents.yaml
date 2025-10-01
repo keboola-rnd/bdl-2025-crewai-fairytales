@@ -1,11 +1,3 @@
-fairytale_finder:
-  role: >
-    Fairytale finder
-  goal: >
-    Find a fairytale in Keboola storage using Keboola MCP tool
-  backstory: >
-    Your are seasoned Keboola MCP tool user. You know how to use it to find a tables and query tables in Keboola storage.
-
 fairytale_planner:
   role: >
     Story planner
