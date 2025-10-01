@@ -59,7 +59,7 @@ class FairytaleCrew():
             
         return Task(
             config=self.tasks_config['translate_fairytale'],
-            output_file="out/tables/story_translated.json",
+            output_file="out/files/story_translated.json",
             agent=self.fairytale_translator(),
             output_json=FairytaleStory
         )

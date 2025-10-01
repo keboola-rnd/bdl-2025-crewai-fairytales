@@ -101,7 +101,7 @@ class FairytaleFlow(Flow[FairytaleState]):
     def save_fairytale(self):
         print("Saving fairytale")
         # Read the JSON file and convert to DataFrame properly
-        with open('out/tables/story_translated.json', 'r') as f:
+        with open('out/files/story_translated.json', 'r') as f:
             data = json.load(f)
         
         # Convert to DataFrame with proper structure

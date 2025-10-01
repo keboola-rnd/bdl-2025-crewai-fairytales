@@ -14,6 +14,7 @@ A sophisticated multi-agent AI system built with CrewAI that creates engaging fa
 
 - Docker and Docker Compose
 - Python 3.10+ (for local development)
+- [uv](https://docs.astral.sh/uv/) package manager
 - Keboola account with storage access
 - OpenAI API key
 
@@ -60,10 +61,17 @@ For local development, you can run the crew directly:
 
 ```bash
 # Install dependencies
-pip install -e .
+uv sync
 
 # Run the crew
-python -m fairytale_crew.main
+uv run python -m fairytale_crew.main
+```
+
+Or using the project scripts:
+
+```bash
+# Run the crew using the defined script
+uv run fairytale_crew
 ```
 
 ## 📊 What the Crew Does
@@ -142,12 +150,16 @@ crewai-mcp/
 
 ### Dependencies
 
+The project uses `uv` for fast and reliable dependency management:
+
 - **CrewAI**: Multi-agent AI framework for orchestration
 - **CrewAI Tools**: MCP integration for external tool connectivity
 - **Keboola Component**: Integration with Keboola data platform
 - **Pandas**: Data manipulation and processing
 - **Pydantic**: Data validation and serialization
 - **HTTPX**: HTTP client for API interactions
+
+All dependencies are managed through `pyproject.toml` and can be installed with `uv sync`.
 
 ### MCP Integration
 
@@ -181,7 +193,11 @@ Each step maintains state and passes data to the next phase, ensuring continuity
 Run with verbose logging to see detailed agent interactions:
 
 ```bash
+# Using Docker
 docker-compose run crew
+
+# Using uv locally
+uv run fairytale_crew
 ```
 
 The system will output detailed logs showing each agent's work and decision-making process.
