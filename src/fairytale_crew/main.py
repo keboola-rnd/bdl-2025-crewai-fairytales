@@ -70,7 +70,7 @@ class FairytaleFlow(Flow[FairytaleState]):
             output_json=BookSummary,
             agent=keboola_mcp_agent,
             verbose=True,
-            output_file="out/tables/book_summary.json"
+            output_file="out/files/book_summary.json"
         )
         
         inspiration_crew = Crew(
